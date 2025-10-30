@@ -4,17 +4,16 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import bodyParser from "body-parser";
 import cors from "cors";
+import controllers from './controllers/controllers.js'; 
+
 
 const app = express();
-const PORT = 5000;
-const JWT_SECRET = "your_jwt_secret"; // Use a strong, secure key in production
+const PORT = 3000;
+const JWT_SECRET = "your_jwt_secret"; 
 
 app.use(bodyParser.json());
 app.use(cors());
 
-const users = []; // Dummy database (use a real DB in production)
-
-// Middleware: Verify Token
 const verifyToken = (req, res, next) => {
   const authHeader = req.headers.authorization;
   if (!authHeader) return res.status(401).json({ message: "Unauthorized" });
@@ -43,6 +42,12 @@ app.post("/signin", async (req, res) => {
 app.get("/protected", verifyToken, (req, res) => {
   res.status(200).json({ message: "Protected data accessed", user: req.user });
 });
+
+app.get('/users', controllers.getUsers);
+app.get('/users/:id', controllers.getUserById);
+app.post('/users', controllers.createUser);
+app.put('/users/:id', controllers.updateUser);
+app.delete('/users/:id', controllers.deleteUser);
 
 app.listen(PORT, () => console.log(`Server running at http://localhost:${PORT}`)
 );
